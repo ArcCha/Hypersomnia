@@ -5,9 +5,9 @@ jobs:
       - image: ubuntu:bionic
     steps:
       - run: apt-get -qq update
-      - run: apt-get install -y -qq curl
+      - run: apt-get install -y -qq curl git
       - run: curl -fsSL https://get.docker.com | sh -
-      - checkout
+      - run: git clone --recurse-submodules --depth 1 https://github.com/TeamHypersomnia/Hypersomnia .
       - setup_remote_docker
       - run: docker build -t arccha/hypersomnia:latest .
       - run: echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
