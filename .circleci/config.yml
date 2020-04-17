@@ -4,6 +4,7 @@ jobs:
     docker:
       - image: ubuntu:bionic
     steps:
+      - setup_remote_docker
       - run: 
           command: |
             apt-get -qq update
@@ -18,9 +19,6 @@ jobs:
             popd
             export PATH=$PATH:/opt/docker-slim/
             git clone --recurse-submodules --depth 1 https://github.com/TeamHypersomnia/Hypersomnia .
-      - setup_remote_docker
-      - run:
-          command: |
             docker build -t arccha/hypersomnia:latest .
             docker-slim build --continue-after 5 --http-probe=false --tag arccha/hypersomnia:latest --include-path /hypersomnia arccha/hypersomnia:latest
             echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
