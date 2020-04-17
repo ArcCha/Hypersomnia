@@ -4,11 +4,24 @@ jobs:
     docker:
       - image: ubuntu:bionic
     steps:
-      - run: apt-get -qq update
-      - run: apt-get install -y -qq curl git
-      - run: curl -fsSL https://get.docker.com | sh -
-      - run: git clone --recurse-submodules --depth 1 https://github.com/TeamHypersomnia/Hypersomnia .
+      - run: 
+          command: |
+            apt-get -qq update
+            apt-get install -y -qq curl git
+            curl -fsSL https://get.docker.com | sh -
+            mkdir /opt/docker-slim
+            pushd /opt/docker-slim 
+            curl -O https://downloads.dockerslim.com/releases/1.29.0/dist_linux.tar.gz 
+            tar xf dist_linux.tar.gz 
+            mv dist_linux/* . 
+            rm dist_linux.tar.gz && rm -rf dist_linux
+            popd
+            export PATH=$PATH:/opt/docker-slim/
+            git clone --recurse-submodules --depth 1 https://github.com/TeamHypersomnia/Hypersomnia .
       - setup_remote_docker
-      - run: docker build -t arccha/hypersomnia:latest .
-      - run: echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
-      - run: docker push arccha/hypersomnia:latest
+      - run:
+          command: |
+            docker build -t arccha/hypersomnia:latest .
+            docker-slim build --continue-after 5 --http-probe=false --tag arccha/hypersomnia:latest --include-path /hypersomnia arccha/hypersomnia:latest
+            echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
+            docker push arccha/hypersomnia:latest
