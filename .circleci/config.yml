@@ -1,0 +1,13 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: ubuntu:bionic
+    steps:
+      - run: apt-get install curl
+      - run: curl -fsSL https://get.docker.com | sh -
+      - checkout
+      - setup_remote_docker
+      - run: docker build -t arccha/hypersomnia:latest .
+      - run: echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin
+      - run: docker push arccha/hypersomnia:latest
