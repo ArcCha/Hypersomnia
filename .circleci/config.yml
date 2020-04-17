@@ -1,4 +1,9 @@
 version: 2.1
+workflows:
+  workflow:
+    jobs:
+      - build:
+          context: Hypersomnia 
 jobs:
   build:
     docker:
