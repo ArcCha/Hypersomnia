@@ -7,8 +7,6 @@ jobs:
       - setup_remote_docker
       - run: 
           command: |
-            docker create -v /dcert_path --name dcert alpine:latest /bin/true
-            docker cp $DOCKER_CERT_PATH/. dcert:/dcert_path
             apt-get -qq update
             apt-get install -y -qq curl git
             curl -fsSL https://get.docker.com | sh -
@@ -20,6 +18,8 @@ jobs:
             rm dist_linux.tar.gz && rm -rf dist_linux
             popd
             export PATH=$PATH:/opt/docker-slim/
+            docker create -v /dcert_path --name dcert alpine:latest /bin/true
+            docker cp $DOCKER_CERT_PATH/. dcert:/dcert_path
             git clone --recurse-submodules --depth 1 https://github.com/TeamHypersomnia/Hypersomnia .
             docker build -t arccha/hypersomnia:latest .
             # docker-slim build --continue-after 5 --http-probe=false --tag arccha/hypersomnia:latest --include-path /hypersomnia arccha/hypersomnia:latest
